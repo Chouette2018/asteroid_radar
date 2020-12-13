@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-const val NASA_API_KEY = 
+const val NASA_API_KEY = "kJ0NjlUIisbZEOldE7rDRznqq0ZncITSIBZMS0z2"
 private const val API_KEY_PARAM = "api_key"
 private const val START_DATE_PARAM = "start_date"
 
@@ -41,9 +41,6 @@ class NasaInterceptor : Interceptor {
 }
 
 interface NasaService {
-    /*@GET("devbytes.json")
-    fun getAsteroidsList(): Deferred<NetworkVideoContainer>*/
-
     @GET("neo/rest/v1/feed")
     suspend fun getAsteroidsList(@Query(START_DATE_PARAM) startDate :String): ResponseBody//JsonElement JsonObject
 
@@ -112,5 +109,30 @@ object Network {
         }
 
         return emptyList()
+    }
+
+    suspend fun getImageOfTheDay(): String {
+        /*dataLoadingState.postValue(
+            DataLoadingState(
+                Status.LOADING,
+                scenario = scenario
+            )
+        )*/
+        try {
+            val imageOfTheDay = nasaService.getImageOfTheDay()
+
+            return imageOfTheDay.url
+        } catch (e: HttpException) {
+            //dataLoadingState.postValue(DataLoadingState.error(e.message(), e.code(), scenario = scenario))
+            e.printStackTrace()
+        } catch (e: IOException) {
+            //dataLoadingState.postValue(DataLoadingState.error("Please, check your network settings.", scenario = scenario))
+            e.printStackTrace()
+        } catch (e: Exception) {
+            //dataLoadingState.postValue(DataLoadingState.error("Unknown internal error.", scenario = scenario))
+            e.printStackTrace()
+        }
+
+        return ""
     }
 }

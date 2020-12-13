@@ -10,12 +10,13 @@ import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.databinding.RadarSimpleItemBinding
 
-class AsteroidAdapter : ListAdapter<Asteroid, AsteroidAdapter.ViewHolder>(AsteroidDiffCallback()) {
+class AsteroidAdapter(val clickListener:AsteroidListener) : ListAdapter<Asteroid, AsteroidAdapter.ViewHolder>(AsteroidDiffCallback()) {
 
 
     class ViewHolder private constructor(val binding : RadarSimpleItemBinding) :RecyclerView.ViewHolder(binding.root){
-        fun bind(item: Asteroid) {
+        fun bind(item: Asteroid, clickListener:AsteroidListener) {
             binding.asteroid = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
         }
 
@@ -34,7 +35,7 @@ class AsteroidAdapter : ListAdapter<Asteroid, AsteroidAdapter.ViewHolder>(Astero
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 }
 
@@ -50,4 +51,8 @@ class AsteroidDiffCallback : DiffUtil.ItemCallback<Asteroid>(){
                 && oldItem.relativeVelocity == newItem.relativeVelocity
                 && oldItem.distanceFromEarth == newItem.distanceFromEarth
     }
+}
+
+class AsteroidListener(val clickListener: (asteroid: Asteroid) -> Unit) {
+    fun onClick(asteroid: Asteroid) = clickListener(asteroid)
 }

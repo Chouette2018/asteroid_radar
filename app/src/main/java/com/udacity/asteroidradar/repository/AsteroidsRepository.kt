@@ -1,6 +1,7 @@
 package com.udacity.asteroidradar.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.api.Network
@@ -14,11 +15,20 @@ class AsteroidsRepository(private val database :AsteroidsDatabase) {
     val asteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidDao.getAsteroids()){
         it.asDomainModel()
     }
+    private val _imageOfTheDay:MutableLiveData<String> = MutableLiveData<String>()
+    val imageOfDay : LiveData<String>
+        get() = _imageOfTheDay
 
     suspend fun refreshAsteroids(){
         withContext(Dispatchers.IO){
             val asteroidsList = Network.fetchAsteroids()
             database.asteroidDao.insertAll(asteroidsList.asDatabaseModel())
+        }
+    }
+
+    suspend fun getImageOfTheDay(){
+        withContext(Dispatchers.IO){
+            _imageOfTheDay.postValue(Network.getImageOfTheDay())
         }
     }
 }
