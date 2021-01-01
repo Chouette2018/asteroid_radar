@@ -6,21 +6,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.repository.AsteroidsRepository
-import com.udacity.asteroidradar.room.getDatabase
+import com.udacity.asteroidradar.Filter
+import com.udacity.asteroidradar.repository.AsteroidsRepository.Companion.getNewRepository
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : ViewModel() {
-    val databaseAsteroid = getDatabase(application.applicationContext)
-    val repository = AsteroidsRepository(databaseAsteroid)
+    private val repository = getNewRepository(application.applicationContext)
     val asteroids = repository.asteroids
     val imageOfTheDay = repository.imageOfDay
 
 
     init{
         viewModelScope.launch{
-            repository.refreshAsteroids()
+            getAsteroids(Filter.SHOW_ALL)
             repository.getImageOfTheDay()
         }
     }
@@ -41,5 +40,16 @@ class MainViewModel(application: Application) : ViewModel() {
 
     fun navigateToAsteroidDetailsDone(){
         _navigateToAsteroidDetails.value = null
+    }
+
+    //menu update
+    fun updateFilter(showFiltered: Filter) {
+        getAsteroids(showFiltered)
+    }
+
+    private fun getAsteroids(showFiltered: Filter){
+        viewModelScope.launch{
+            repository.getAsteroids(showFiltered)
+        }
     }
 }

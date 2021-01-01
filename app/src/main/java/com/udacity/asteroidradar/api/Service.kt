@@ -3,11 +3,10 @@ package com.udacity.asteroidradar.api
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.Asteroid
-import kotlinx.coroutines.Deferred
+import com.udacity.asteroidradar.Constants.API_QUERY_DATE_FORMAT
 import okhttp3.*
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -74,37 +73,21 @@ object Network {
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun fetchAsteroids(startDate:String = ""): List<Asteroid> {
-        /*dataLoadingState.postValue(
-            DataLoadingState(
-                Status.LOADING,
-                scenario = scenario
-            )
-        )*/
         try {
             val current = LocalDateTime.now()
-
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val formatter = DateTimeFormatter.ofPattern(API_QUERY_DATE_FORMAT)
             val formatted = current.format(formatter)
 
             var jsonResponse = nasaService.getAsteroidsList(formatted)
 
             var asteroidsList = parseAsteroidsJsonResult(JSONObject(jsonResponse.string()))
-            /*dataLoadingState.postValue(
-                DataLoadingState(
-                    Status.SUCCESS,
-                    scenario = scenario
-                )
-            )*/
 
             return asteroidsList
         } catch (e: HttpException) {
-            //dataLoadingState.postValue(DataLoadingState.error(e.message(), e.code(), scenario = scenario))
             e.printStackTrace()
         } catch (e: IOException) {
-            //dataLoadingState.postValue(DataLoadingState.error("Please, check your network settings.", scenario = scenario))
             e.printStackTrace()
         } catch (e: Exception) {
-            //dataLoadingState.postValue(DataLoadingState.error("Unknown internal error.", scenario = scenario))
             e.printStackTrace()
         }
 
@@ -112,24 +95,15 @@ object Network {
     }
 
     suspend fun getImageOfTheDay(): String {
-        /*dataLoadingState.postValue(
-            DataLoadingState(
-                Status.LOADING,
-                scenario = scenario
-            )
-        )*/
         try {
             val imageOfTheDay = nasaService.getImageOfTheDay()
 
             return imageOfTheDay.url
         } catch (e: HttpException) {
-            //dataLoadingState.postValue(DataLoadingState.error(e.message(), e.code(), scenario = scenario))
             e.printStackTrace()
         } catch (e: IOException) {
-            //dataLoadingState.postValue(DataLoadingState.error("Please, check your network settings.", scenario = scenario))
             e.printStackTrace()
         } catch (e: Exception) {
-            //dataLoadingState.postValue(DataLoadingState.error("Unknown internal error.", scenario = scenario))
             e.printStackTrace()
         }
 
