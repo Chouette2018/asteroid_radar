@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-const val NASA_API_KEY = "kJ0NjlUIisbZEOldE7rDRznqq0ZncITSIBZMS0z2"
+const val NASA_API_KEY = ""
 private const val API_KEY_PARAM = "api_key"
 private const val START_DATE_PARAM = "start_date"
 
